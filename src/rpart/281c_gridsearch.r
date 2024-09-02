@@ -13,7 +13,7 @@ require("primes")
 PARAM <- list()
 # reemplazar por su primer semilla
 PARAM$semilla_primigenia <- 703733
-PARAM$qsemillas <- 20
+PARAM$qsemillas <- 15
 
 PARAM$training_pct <- 70L  # entre  1L y 99L 
 
@@ -142,7 +142,7 @@ tb_grid_search_detalle <- data.table(
 for (vmax_depth in c(4, 6, 8, 10, 12, 14)) {
   for (vmin_split in c(1000, 800, 600, 400, 200, 100, 50, 20, 10)) {
   	for (rel_minsplit in c(2,3,4,5,10,20,50,100)) { 
-  		for (vcp in (-1, -0.9, -0.8, -0.7, -0.6, -0.5)) { 
+  		for (vcp in c(-1, -0.9, -0.8, -0.7, -0.6, -0.5)) { 
 
 		    # si la division da menos de 5, entonces usamos 5
 		    vmin_bucket = vmin_split %/% rel_minsplit
