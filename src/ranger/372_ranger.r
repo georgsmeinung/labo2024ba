@@ -16,10 +16,10 @@ PARAM$experimento <- 3720
 
 # hiperparámetros de Random Forest
 PARAM$ranger <- list(
-  "num.trees" = 300, # cantidad de arboles
-  "mtry" = 13, # cantidad de atributos que participan en cada split
-  "min.node.size" = 50, # tamaño minimo de las hojas
-  "max.depth" = 10 # 0 significa profundidad infinita
+  "num.trees" = 750, # cantidad de arboles
+  "mtry" = 50, # cantidad de atributos que participan en cada split
+  "min.node.size" = 10, # tamaño minimo de las hojas
+  "max.depth" = 22 # 0 significa profundidad infinita
 )
 
 #------------------------------------------------------------------------------
@@ -36,13 +36,15 @@ dir.create(paste0("./exp/KA", PARAM$experimento, "/"),
 
 setwd(carpeta_experimento)
 
+# Format the timestamp without separator
+timestamp <- Sys.time()
+formatted_timestamp <- format(timestamp, "%Y%m%d%H%M%S")
 
 #cargo miAmbiente
 miAmbiente <- read_yaml( "~/buckets/b1/miAmbiente.yml" )
 
 # cargo los datos
 dataset <- fread( miAmbiente$dataset_pequeno )
-
 
 # asigno un valor muy negativo
 #  estas dos lineas estan relacionadas con el Data Drifting
@@ -56,10 +58,7 @@ if( "Visa_Finiciomora" %in% colnames(dataset) )
 dtrain <- dataset[foto_mes == 202107]
 dapply <- dataset[foto_mes == 202109]
 
-
-
 set.seed( miAmbiente$semilla_primigenia ) # Establezco la semilla aleatoria
-
 
 # ranger necesita la clase de tipo factor
 factorizado <- as.factor(dtrain$clase_ternaria)
@@ -102,7 +101,7 @@ entrega <- as.data.table(list(
 
 
 
-nom_arch_kaggle <- "KA3720_001.csv"
+nom_arch_kaggle <- paste0("KA3720_001_",formatted_timestamp,".csv")
 
 # genero el archivo para Kaggle
 fwrite(entrega,

@@ -212,8 +212,6 @@ set.seed(miAmbiente$semilla_primigenia) # inicializo
 # me quedo con PARAM$qsemillas   semillas
 PARAM$semillas <- sample(primos, 2 )
 
-
-
 # cargo el dataset donde voy a entrenar el modelo
 dataset <- fread(miAmbiente$dataset_pequeno, stringsAsFactors = TRUE)
 
@@ -224,14 +222,16 @@ if( "Master_Finiciomora" %in% colnames(dataset) )
 if( "Visa_Finiciomora" %in% colnames(dataset) )
 dataset[ is.na(Visa_Finiciomora) , Visa_Finiciomora :=  -999 ]
 
-
 dataset <- dataset[foto_mes %in% PARAM$input$training]
 
+# timestamp de creacion de archivo formato ISO sin separadores
+timestamp <- Sys.time()
+formatted_timestamp <- format(timestamp, "%Y%m%d%H%M%S")
 
 # en estos archivos quedan los resultados
-kbayesiana <- paste0(PARAM$experimento, ".RDATA")
-klog <- paste0(PARAM$experimento, ".txt")
-klog_mejor <- paste0(PARAM$experimento, "_mejor.txt")
+kbayesiana <- paste0(PARAM$experimento,"_",formatted_timestamp, ".RDATA")
+klog <- paste0(PARAM$experimento,"_",formatted_timestamp, ".txt")
+klog_mejor <- paste0(PARAM$experimento,"_",formatted_timestamp, "_mejor.txt")
 
 GLOBAL_iteracion <- 0 # inicializo la variable global
 GLOBAL_mejor <- -Inf
@@ -241,8 +241,6 @@ if (file.exists(klog)) {
   tabla_log <- fread(klog)
   GLOBAL_iteracion <- nrow(tabla_log)
 }
-
-
 
 # paso a trabajar con clase binaria POS={BAJA+2}   NEG={BAJA+1, CONTINUA}
 dataset[, clase_binaria :=
@@ -304,5 +302,3 @@ system( "~/install/repobrutalcopy.sh" )
 # apago la virtual machine  para que no facture Google Cloud
 # Give them nothing, but take from them everything.
 system( "sudo shutdown" )
-
-

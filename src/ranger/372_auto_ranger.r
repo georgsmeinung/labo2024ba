@@ -4,22 +4,39 @@
 rm(list = ls()) # Borro todos los objetos
 gc() # Garbage Collection
 
+# leo arguments pasados con RScript
+args <- commandArgs(trailingOnly = TRUE)
+
+if (length(args) == 0) {
+  print("USO: 372_auto_ranger [num.trees] [mtry] [min.node.size] [max.depth]")
+  print("EJEMPLO: 372_auto_ranger 750 50 10 22")
+  stop("Este versión del scritp requiere el uso de argumetnos")
+}
+
+hiperargumentos <- list(
+  "numtrees" = as.numeric(args[1]) ,
+  "mtry" = as.numeric(args[2]),
+  "minnodesize" = as.numeric(args[3]),
+  "maxdepth" = as.numeric(args[4])
+)
+
+print(hiperargumentos)
+
 require("data.table")
 require("yaml")
 
 require("ranger")
 require("randomForest") # solo se usa para imputar nulos
 
-
 PARAM <- list()
 PARAM$experimento <- 3720
 
 # hiperparámetros de Random Forest
 PARAM$ranger <- list(
-  "num.trees" = 300, # cantidad de arboles
-  "mtry" = 13, # cantidad de atributos que participan en cada split
-  "min.node.size" = 50, # tamaño minimo de las hojas
-  "max.depth" = 10 # 0 significa profundidad infinita
+  "num.trees" = hiperargumentos$numtrees, # cantidad de arboles
+  "mtry" = hiperargumentos$mtry, # cantidad de atributos que participan en cada split
+  "min.node.size" = hiperargumentos$minnodesize, # tamaño minimo de las hojas
+  "max.depth" = hiperargumentos$maxdepth # 0 significa profundidad infinita
 )
 
 #------------------------------------------------------------------------------
@@ -36,13 +53,15 @@ dir.create(paste0("./exp/KA", PARAM$experimento, "/"),
 
 setwd(carpeta_experimento)
 
+# Format the timestamp without separator
+timestamp <- Sys.time()
+formatted_timestamp <- format(timestamp, "%Y%m%d%H%M%S")
 
 #cargo miAmbiente
 miAmbiente <- read_yaml( "~/buckets/b1/miAmbiente.yml" )
 
 # cargo los datos
 dataset <- fread( miAmbiente$dataset_pequeno )
-
 
 # asigno un valor muy negativo
 #  estas dos lineas estan relacionadas con el Data Drifting
@@ -56,10 +75,7 @@ if( "Visa_Finiciomora" %in% colnames(dataset) )
 dtrain <- dataset[foto_mes == 202107]
 dapply <- dataset[foto_mes == 202109]
 
-
-
 set.seed( miAmbiente$semilla_primigenia ) # Establezco la semilla aleatoria
-
 
 # ranger necesita la clase de tipo factor
 factorizado <- as.factor(dtrain$clase_ternaria)
@@ -72,6 +88,7 @@ dtrain <- na.roughfix(dtrain)
 setorder(dtrain, clase_ternaria) # primero quedan los BAJA+1, BAJA+2, CONTINUA
 
 # genero el modelo de Random Forest llamando a ranger()
+print(PARAM$ranger)
 modelo <- ranger(
   formula = "clase_ternaria ~ .",
   data = dtrain,
@@ -102,7 +119,7 @@ entrega <- as.data.table(list(
 
 
 
-nom_arch_kaggle <- "KA3720_001.csv"
+nom_arch_kaggle <- paste0("KA3720_001_",formatted_timestamp,".csv")
 
 # genero el archivo para Kaggle
 fwrite(entrega,
