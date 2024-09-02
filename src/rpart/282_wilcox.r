@@ -58,7 +58,7 @@ for ( i in 1:(total-1))
     id2 <- tb_grid_search[ j, id ]
     vcomparacion <- tb_grid_search[ j, ganancias[[1]] ]
     
-    paste("id1:",id1,"len:",length(vganador),"id2:",id2,"len:",length(vganador))
+    print(paste("id1:",id1,"len:",length(vganador),"id2:",id2,"len:",length(vganador)))
     
     if (all(vganador != vcomparacion))
     {
