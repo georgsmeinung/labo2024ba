@@ -11,25 +11,22 @@ gc() # Garbage Collection
 
 require("data.table")
 require("rpart")
+require("rlist")
 require("yaml")
 
 # parametros experimento
 PARAM <- list()
-PARAM$experimento <- 3610
+PARAM$experimento <- 3690
 
 # parametros rpart
 
 #  cargue aqui los hiperparametros elegidos
 PARAM$rpart <- data.table( 
-  "cp" = -1,
-  "minsplit" = 600,
-  "minbucket" = 170,
-  "maxdepth" = 7
+  "cp" = c(-1, -1, -1, -1, -1),
+  "minsplit" = c(50, 25, 25, 250, 1000),
+  "minbucket" = c(20, 10, 5, 20, 5),
+  "maxdepth" = c(12, 8, 8, 8, 12)
 )
-
-# Format the timestamp without separators
-timestamp <- Sys.time()
-formatted_timestamp <- format(timestamp, "%Y%m%d%H%M%S")
 
 # parametros  arbol
 # entreno cada arbol con solo 50% de las variables variables
@@ -40,8 +37,39 @@ PARAM$feature_fraction <- 0.5
 # voy a generar 512 arboles,
 #  a mas arboles mas tiempo de proceso y MEJOR MODELO,
 #  pero ganancias marginales
-PARAM$num_trees_max <- 64
+PARAM$num_trees_max <- 512
 
+#------------------------------------------------------------------------------
+# graba a un archivo los componentes de lista
+# para el primer registro, escribe antes los titulos
+
+loguear <- function(reg, arch = NA, folder = "./work/", ext = ".txt",
+                    verbose = TRUE) {
+  archivo <- arch
+  if (is.na(arch)) archivo <- paste0(substitute(reg), ext)
+
+  # Escribo los titulos
+  if (!file.exists(archivo)) {
+    linea <- paste0(
+      "fecha\t",
+      paste(list.names(reg), collapse = "\t"), "\n"
+    )
+
+    cat(linea, file = archivo)
+  }
+
+  # la fecha y hora
+  linea <- paste0(
+    format(Sys.time(), "%Y%m%d %H%M%S"), "\t",
+    gsub(", ", "\t", toString(reg)), "\n"
+  )
+
+  # grabo al archivo
+  cat(linea, file = archivo, append = TRUE)
+
+  # imprimo por pantalla
+  if (verbose) cat(linea)
+}
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Aqui comienza el programa
@@ -66,7 +94,7 @@ setwd(carpeta_experimento)
 
 
 # que tamanos de ensemble grabo a disco
-grabar <- c(1, 4, 16, 32, 64, 128, 256, 512)
+grabar <- c(1, 2, 4, 8, 16, 32, 64, 128, 256, 512)
 
 
 # defino los dataset de entrenamiento y aplicacion
@@ -89,6 +117,7 @@ campos_buenos <- copy(setdiff(colnames(dtrain), c("clase_ternaria")))
 # Genero las salidas
 for( icorrida in seq(nrow(PARAM$rpart)) ){
 
+  registro <- PARAM$rpart[ icorrida ]
   cat( "Corrida ", icorrida, " ; " )
 
   # aqui se va acumulando la probabilidad del ensemble
@@ -135,8 +164,7 @@ for( icorrida in seq(nrow(PARAM$rpart)) ){
       )) # genero la salida
 
       nom_arch_kaggle <- paste0(
-        "KA", PARAM$experimento, "_064_",
-        formatted_timestamp,"_",
+        "KA", PARAM$experimento, "_",
         icorrida, "_",
         sprintf("%.3d", arbolito), # para que tenga ceros adelante
         ".csv"
@@ -153,10 +181,10 @@ for( icorrida in seq(nrow(PARAM$rpart)) ){
       # preparo todo para el submit
       comentario <- paste0( "'",
         "trees=", arbolito,
-        " cp=", PARAM$rpart$cp,
-        " minsplit=", PARAM$rpart$minsplit,
-        " minbucket=", PARAM$rpart$minbucket,
-        " maxdepth=", PARAM$rpart$maxdepth,
+        " cp=", registro$cp,
+        " minsplit=", registro$minsplit,
+        " minbucket=", registro$minbucket,
+        " maxdepth=", registro$maxdepth,
         "'"
       )
 
@@ -168,11 +196,12 @@ for( icorrida in seq(nrow(PARAM$rpart)) ){
       )
 
       ganancia <- system( comando, intern=TRUE )
-      cat( paste0( ganancia, "\t", nom_arch_kaggle, "\n"),
-        file="tb_ganancias.txt",
-        append=TRUE
+      linea <- c( 
+        list( "ganancia"= ganancia, "arbolitos"=arbolito),
+        registro
       )
 
+      loguear( linea, arch="tb_ganancias.txt" )
     }
 
     cat(arbolito, " ")
@@ -186,5 +215,5 @@ system( "~/install/repobrutalcopy.sh" )
 
 # apago la virtual machine  para que no facture Google Cloud
 # Give them nothing, but take from them everything.
-# system( "sudo shutdown" )
+system( "sudo shutdown" )
 
