@@ -7,23 +7,35 @@ require("lightgbm")
 require("yaml")
 require("rlist")
 
-
 # defino los parametros de la corrida, en una lista, la variable global  PARAM
 PARAM <- list()
-PARAM$experimento <- "KA4210"
 
+# Format the timestamp without separator
+timestamp <- Sys.time()
+ftime <- format(timestamp, "%H%M%S")
+fdate <- format(timestamp, "%Y%m%d")
+# Format unique experiment identifier
+PARAM$experimento <- paste0("KA4216-",fdate,"-",ftime)
 
 PARAM$input$training <- c(202107) # meses donde se entrena el modelo
 PARAM$input$future <- c(202109) # meses donde se aplica el modelo
 
 
-PARAM$finalmodel$num_iterations <- 1000
-PARAM$finalmodel$learning_rate <- 0.027
-PARAM$finalmodel$feature_fraction <- 0.8
-PARAM$finalmodel$min_data_in_leaf <- 76
-PARAM$finalmodel$num_leaves <- 8
+PARAM$finalmodel$num_iterations <- 2048
+PARAM$finalmodel$learning_rate <- 0.03
+PARAM$finalmodel$feature_fraction <- 0.85994303917331
+PARAM$finalmodel$min_data_in_leaf <- 25
+PARAM$finalmodel$num_leaves <- 2048
+PARAM$finalmodel$max_bin <- 128
 
-PARAM$finalmodel$max_bin <- 31
+#parametros extra
+PARAM$finalmodel$objective <- "binary"
+PARAM$finalmodel$metric <- "auc"
+PARAM$finalmodel$lambda_l1 <- 30
+PARAM$finalmodel$lambda_l2 <- 70
+PARAM$finalmodel$feature_fraction <- 0.75
+PARAM$finalmodel$bagging_fraction <- 0.65
+PARAM$finalmodel$bagging_freq <- 1
 
 #------------------------------------------------------------------------------
 # graba a un archivo los componentes de lista
@@ -107,22 +119,25 @@ dtrain <- lgb.Dataset(
 
 # genero el modelo
 # estos hiperparametros  salieron de una laaarga Optmizacion Bayesiana
+
 modelo <- lgb.train(
   data = dtrain,
   param = list(
-    objective = "binary",
-    max_bin = 31,
-    learning_rate = 0.027,
-    num_iterations = 1000,
-    num_leaves = 16,
-    max_depth = -1,
-    min_data_in_leaf = 15,
-    feature_fraction = 0.9,
-    bagging_freq = 1,
-    bagging_fraction = 0.9,
-    lambda_l1=6,
-    lambda_l2=66, 
-    seed = miAmbiente$semilla_primigenia
+    objective = PARAM$finalmodel$objective,
+    max_bin = PARAM$finalmodel$max_bin,
+    learning_rate = PARAM$finalmodel$learning_rate,
+    num_iterations = PARAM$finalmodel$num_iterations,
+    num_leaves = PARAM$finalmodel$num_leaves,
+    min_data_in_leaf = PARAM$finalmodel$min_data_in_leaf,
+    feature_fraction = PARAM$finalmodel$feature_fraction,
+    seed = miAmbiente$semilla_primigenia,
+    #parametros extra
+    metric = PARAM$finalmodel$metric,
+    lambda_l1 = PARAM$finalmodel$lambda_l1,
+    lambda_l2 = PARAM$finalmodel$lambda_l2,
+    feature_fraction = PARAM$finalmodel$feature_fraction,
+    bagging_fraction = PARAM$finalmodel$bagging_fraction,
+    bagging_freq = PARAM$finalmodel$bagging_freq
   )
 )
 
@@ -174,7 +189,7 @@ for (envios in cortes) {
   tb_entrega[, Predicted := 0L]
   tb_entrega[1:envios, Predicted := 1L]
 
-  nom_arch_kaggle <- paste0(PARAM$experimento, "_", envios, ".csv")
+  nom_arch_kaggle <- paste0(PARAM$experimento, "_", envios,".csv")
 
   fwrite(tb_entrega[, list(numero_de_cliente, Predicted)],
     file = nom_arch_kaggle,
@@ -207,7 +222,7 @@ for (envios in cortes) {
     PARAM$finalmodel
   )
 
-  loguear( linea, arch="tb_ganancias.txt" )
+  loguear( linea, arch="tb_ganancias.txt")
 
 }
 
