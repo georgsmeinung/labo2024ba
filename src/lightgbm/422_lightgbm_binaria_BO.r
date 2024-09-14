@@ -55,23 +55,17 @@ PARAM$hyperparametertuning$NEG_ganancia <- -3000
 
 # Aqui se cargan los bordes de los hiperparametros
 hs <- makeParamSet(
-  makeIntegerParam("max_bin", lower = 10L, upper = 3000L),
-  makeIntegerParam("num_leaves", lower = 2L, upper = 512L),
+  makeIntegerParam("max_bin", lower = 1L, upper = 3000L),
+  makeIntegerParam("num_leaves", lower = 1L, upper = 512L),
   makeIntegerParam("min_data_in_leaf", lower = 1L, upper = 256L),
-  makeNumericParam("min_sum_hessian_in_leaf", lower = 0.001, upper = 10),
-  makeNumericParam("bagging_fraction", lower = 0.5, upper = 1.0),
-  # makeDiscreteParam("bagging_freq", values = 1L),
+  makeNumericParam("bagging_fraction", lower = 0.1, upper = 1.0),
   makeNumericParam("feature_fraction", lower = 0.1, upper = 1.0),
-  makeIntegerParam("max_depth", lower = 2L, upper = 256L),  
   makeNumericParam("lambda_l1", lower = 0.01, upper = 100),
   makeNumericParam("lambda_l2", lower = 0.01, upper = 100),
-  makeNumericParam("learning_rate", lower = 0.01, upper = 0.4),
-  makeNumericParam("min_gain_to_split", lower = 0, upper = 500),
-  makeIntegerParam("envios", lower = 1000L, upper = 30000L),
-  makeIntegerParam('n_estimators', lower = 30L, upper = 5000L), 
-  makeNumericParam('subsample', lower = 0.01, upper = 1.0),
-  makeIntegerParam('num_iterations', lower = 10L, upper = 1000L)
-  # makeIntegerParam('early_stopping_round', lower = 0L, upper = 10L)  
+  makeNumericParam("learning_rate", lower = 0.01, upper = 0.99),
+  makeNumericParam("min_gain_to_split", lower = 0.0001, upper = 1),
+  makeIntegerParam("num_iterations", lower = 1L, upper = 512L),
+  makeIntegerParam("envios", lower = 1L, upper = 50000L)
 )
 
 #------------------------------------------------------------------------------
