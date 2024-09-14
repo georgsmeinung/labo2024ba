@@ -9,22 +9,38 @@
 rm(list = ls()) # Borro todos los objetos
 gc() # Garbage Collection
 
+# leo arguments pasados con RScript
+args <- commandArgs(trailingOnly = TRUE)
+
+if (length(args) == 0) {
+  print("USO: 361_auto_arboles [cp] [minsplit] [minbucket] [maxdepth]")
+  print("EJEMPLO: 372_auto_arboles -0.5 800 40 3")
+  stop("Este versión del scritp requiere el uso de argumetnos")
+}
+
+ha <- list(
+  "cp" = as.numeric(args[1]) ,
+  "minsplit" = as.numeric(args[2]),
+  "minbucket" = as.numeric(args[3]),
+  "maxdepth" = as.numeric(args[4])
+)
+
 require("data.table")
 require("rpart")
 require("yaml")
 
 # parametros experimento
 PARAM <- list()
-PARAM$experimento <- 3610
+PARAM$experimento <- 3611
 
 # parametros rpart
 
 #  cargue aqui los hiperparametros elegidos
 PARAM$rpart <- data.table( 
-  "cp" = -1,
-  "minsplit" = 600,
-  "minbucket" = 170,
-  "maxdepth" = 7
+  "cp" = ha$cp,
+  "minsplit" = ha$minsplit,
+  "minbucket" = ha$minbucket,
+  "maxdepth" = ha$maxdepth
 )
 
 # Format the timestamp without separators
@@ -40,7 +56,7 @@ PARAM$feature_fraction <- 0.5
 # voy a generar 512 arboles,
 #  a mas arboles mas tiempo de proceso y MEJOR MODELO,
 #  pero ganancias marginales
-PARAM$num_trees_max <- 64
+PARAM$num_trees_max <- 512
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
@@ -66,7 +82,7 @@ setwd(carpeta_experimento)
 
 
 # que tamanos de ensemble grabo a disco
-grabar <- c(1, 4, 16, 32, 64, 128, 256, 512)
+grabar <- c(1, 2, 4, 8, 16, 32, 64, 128, 256, 512)
 
 
 # defino los dataset de entrenamiento y aplicacion
@@ -135,9 +151,8 @@ for( icorrida in seq(nrow(PARAM$rpart)) ){
       )) # genero la salida
 
       nom_arch_kaggle <- paste0(
-        "KA", PARAM$experimento, "_064_",
+        "KA", PARAM$experimento, "_AUTO_",
         formatted_timestamp,"_",
-        icorrida, "_",
         sprintf("%.3d", arbolito), # para que tenga ceros adelante
         ".csv"
       )
