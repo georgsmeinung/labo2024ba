@@ -2,8 +2,9 @@
 # - CA MICE
 # - DR rank_cero_fijo
 # - FEHist lag1, lag2, tendencia1, tendencia2 SIN ratios
-# - CA ratio 1.5 y desvio 3.0
+# - CA doble despues de FEHist y despues de RF
 # - RF min_data_in_leaf = 500, feature_fraction_bynode  = 0.15
+# - TS en 13 meses desde 201909
 # - Submits de 10000L a 12000L cada 500 L
 # - FM qsemillas=20 
 
