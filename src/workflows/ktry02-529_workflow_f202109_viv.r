@@ -6,6 +6,7 @@
 # - RF min_data_in_leaf = 500, feature_fraction_bynode  = 0.15
 # - Submits de 10000L a 12000L cada 500 L
 # - FM qsemillas=20 
+# Resultados en b3f2b43/flow/wf_septiembre-039
 
 
 # limpio la memoria
