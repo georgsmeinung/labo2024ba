@@ -1,4 +1,4 @@
-# ktry04 - Corrida Compentencia Kaggle
+# ktry05 - Corrida Compentencia Kaggle
 # - CA=MachineLearning
 # - DR=rank_cero_fijo
 # - FEHist lag1, lag2, tendencia1, tendencia2 SIN ratios
