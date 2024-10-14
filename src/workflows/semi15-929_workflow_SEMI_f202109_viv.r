@@ -417,7 +417,7 @@ HT_tuning_semillerio <- function( pinputexps, semillerio, bo_iteraciones, bypass
 
     num_iterations_log = c(2, 8),  # directo a num_iterations 2^ 
     leaf_size_log = c( -11, -5),   # deriva en min_data_in_leaf
-    coverage_log = c( -4, 0 )      # deriva en num_leaves
+    coverage_log = c( -4, 0 ),      # deriva en num_leaves
 
     lambda_l1 = c( 1, 100 ), # lambda_l1 >= 0.0
     lambda_l2 = c( 1, 100 ), # lambda_l2 >= 0.0    
