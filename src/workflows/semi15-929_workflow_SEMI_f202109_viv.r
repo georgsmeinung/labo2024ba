@@ -420,7 +420,7 @@ HT_tuning_semillerio <- function( pinputexps, semillerio, bo_iteraciones, bypass
     coverage_log = c( -4, 0 ),      # deriva en num_leaves
 
     lambda_l1 = c( 1, 100 ), # lambda_l1 >= 0.0
-    lambda_l2 = c( 1, 100 ), # lambda_l2 >= 0.0    
+    lambda_l2 = c( 1, 100 ) # lambda_l2 >= 0.0    
   )
 
 
