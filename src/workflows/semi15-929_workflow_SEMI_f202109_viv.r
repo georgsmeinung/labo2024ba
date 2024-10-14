@@ -2,11 +2,53 @@
 # - CA=Ninguno
 # - DR=rank_simple
 # - FEHist lag1, lag2, tendencia1, tendencia2 SIN promedios ni ratios
-# - CN doble despues de FEHist (ratio=0.95, desvio=2.35) y despues de RF (ratio=0.95, desvio=2.35)
-# - RF default
-# - TS en 19 meses desde 201901 y param_local$train$undersampling <- 0.3=0.3
-# - Submits de 10500L a 11500L cada 250L
-# - FM qsemillas=20
+# - CN despues de RF (ratio=0.95, desvio=2.35)
+# - RF:
+#      num_iterations = 20,
+#      num_leaves  = 16,
+#      min_data_in_leaf = 2,
+#      feature_fraction_bynode  = 0.8,
+# - TS:
+#      param_local$final_train$undersampling <- 0.2
+#      param_local$final_train$training <- c(
+#          202107, 202106, 202105, 202104, 202103, 202102, 202101, 
+#          202012, 202011, 202010, 202009, 202008, 202007, 202006,
+#          202005, 202004, 202003, 202002, 202001
+#      )
+#      param_local$train$training <- c(
+#          202103, 202102, 202101, 
+#          202012, 202011, 202010, 202009, 202008, 202007,
+#          # 202006  Excluyo por variables rotas
+#          202005, 202004, 202003, 202002, 202001,
+#          201912, 201911, 201910,
+#          201909, 201908
+#      )
+#      param_local$train$validation <- c(202106,202104,202005)
+#      param_local$train$testing <- c(202107)
+#      param_local$train$undersampling <- 0.2
+# - HT:
+#      # Fijos cambiados
+#      is_unbalance = TRUE, #
+#      # Parte variable
+#      learning_rate = c( 0.02, 0.3 ),
+#      feature_fraction = c( 0.5, 0.9 ),
+#      num_leaves = c( 8L, 8196L,  "integer" ),
+#      min_data_in_leaf = c( 5L, 50000L, "integer" ),
+#      max_delta_step = c( 1.0, 10.0 ),
+#      num_iterations_log = c(2, 8),  # directo a num_iterations 2^ 
+#      leaf_size_log = c( -11, -5),   # deriva en min_data_in_leaf
+#      coverage_log = c( -4, 0 )      # deriva en num_leaves
+#      lambda_l1 = c( 1, 100 ), # lambda_l1 >= 0.0
+#      lambda_l2 = c( 1, 100 ), # lambda_l2 >= 0.0   
+# - KA Submits:
+#      param_local$envios_desde <-  10000L
+#      param_local$envios_hasta <- 12000L
+#      param_local$envios_salto <-   500L
+# - Semillerio:
+#      c(ht, ts9), 
+#      ranks = c(7), 
+#      semillerio = 30,
+#      repeticiones_exp = 1
 
 # Corrida general del Workflow Epic
 
