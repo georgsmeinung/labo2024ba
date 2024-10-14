@@ -21,6 +21,9 @@ mensaje=`echo "$HOSTNAME:[**$@**] START - **$starttimestamp**"`
 end_time=$(date +%s)
 echo "Final: $(date)"
 
+# Copiar salidar
+sh ~/labo/src/cp_output.sh
+
 # Calcular la duración total
 duration=$((end_time - start_time))
 echo "Duración total: $duration segundos"
