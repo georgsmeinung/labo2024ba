@@ -1,4 +1,5 @@
 # semi19: igual a semi14 con otra semilla
+# sin 1301_FE_intrames_manual_modeloFinal.r
 # semilla_primigenia: 703733
 # Corrida general del Workflow Epic
 
@@ -444,7 +445,7 @@ wf_SEMI_sep <- function( pnombrewf )
 
   DT_incorporar_dataset_competencia2024()
   CA_catastrophe_base( metodo="Ninguno")
-  FEintra_manual_base()
+  # FEintra_manual_base()
   DR_drifting_base(metodo="rank_simple")
   FEhist_base()
   FErf_attributes_base()
