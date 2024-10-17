@@ -1,7 +1,51 @@
 # semi22: 
 # semilla_primigenia: 703733
 # config: -------------------------------
+  # CA_catastrophe_base( metodo="EstadisticaClasica")
+  # # FEintra_manual_base()
+  # DR_drifting_base(metodo="rank_simple")
+  # FEhist_base()
+  #   FEhist: 
+  #     lag1=TRUE; lag2=TRUE; lag3=FALSE
+  #     Tendencias1$:
+  #     run=TRUE; ventana=6; tendencia=TRUE; minimo=TRUE;
+  #     promedio=TRUE; ratioavg=FALSE; ratiomax=FALSE
+  #     Tendencias2$:
+  #     run=TRUE; ventana=12; tendencia=TRUE; minimo=TRUE;
+  #     promedio=TRUE; ratioavg=FALSE; ratiomax=FALSE
 
+  # CN_canaritos_asesinos_base(ratio=0.95, desvio=2.35)
+  # FErf_attributes_base()
+  #   RF: Config Default (baseline)
+
+  # CN_canaritos_asesinos_base(ratio=0.95, desvio=2.35)
+
+  # ts9 <- TS_strategy_base9()
+  #   TS:
+  #     final_train$undersampling <- 0.5
+  #     final_train$training <- c(202107, 202106, 202105, 202104, 202103, 202102, 202101, 202012, 202011, 202008, 202007, 202004, 202003, 201912, 201911,201908, 201907,201904, 201903)
+
+  #     train$undersampling <- 0.25
+  #     train$training <- c(202105, 202104, 202103, 202102, 202101, 202012, 202011, 202010, 202009, 202006, 202005, 202002, 202001, 201910, 201909,201906, 201905,201902, 201901)
+
+  # # la Bayesian Optimization con el semillerio dentro
+  # ht <- HT_tuning_semillerio(
+  #   semillerio = 20, # semillerio dentro de la Bayesian Optim
+  #   bo_iteraciones = 20  # iteraciones inteligentes
+  # )
+
+  # fm <- FM_final_models_lightgbm_semillerio( 
+  #   c(ht, ts9), # los inputs
+  #   ranks = c(3), # 1 = el mejor de la bayesian optimization
+  #   semillerio = 20,   # cantidad de semillas finales
+  #   repeticiones_exp = 3 )
+
+  # SC_scoring_semillerio( c(fm, ts9) )
+  # KA_evaluate_kaggle_semillerio()
+  #   KA:
+  #   envios_desde=9000L
+  #   envios_hasta=13000L
+  #   envios_salto=500L
 # end config: ---------------------------
 # Corrida general del Workflow Epic
 
