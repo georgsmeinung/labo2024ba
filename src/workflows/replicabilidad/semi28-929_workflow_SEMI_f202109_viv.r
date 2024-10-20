@@ -1,5 +1,4 @@
-# semi24
-# sin 1301_FE_intrames_manual_modeloFinal.r
+# semi28
 # semilla_primigenia: 703733
 
 # Corrida general del Workflow Epic
@@ -275,15 +274,12 @@ TS_strategy_base9 <- function( pinputexps )
 
   param_local$final_train$undersampling <- 0.3
   param_local$final_train$clase_minoritaria <- c( "BAJA+1", "BAJA+2")
-  param_local$final_train$training <- c(202107, 202106, 202105, 202104, 202103, 202102, 202101, 202012, 202011, 202010, 
-                                        202009, 202008, 202007, 202006, 202005, 202004, 202002, 202001, 201912, 201911, 
-                                        201910, 201909, 201908, 201907)
+  param_local$final_train$training <- c(202107, 202106, 202105, 202104, 202103, 202102, 202101, 202012, 202011, 202010, 202009, 202008, 202007, 202006, 202005, 202004, 202002, 202001, 201912, 201911, 201910, 201909, 201908, 201907)
 
 
-  param_local$train$training <- c(202105, 202104, 202103, 202102, 202101, 202012, 202011, 202010, 202009, 202008, 202007,
-                                  202006, 202005, 202004, 202002, 202001, 201912, 201910, 201909, 201908, 201907, 201906,
-                                  201905, 201904)
-  param_local$train$validation <- c(202106)
+  param_local$train$training <- c(202105, 202104, 202103, 202102, 202101, 202012, 202011, 202010, 202009, 202008, 202007, 202006, 202005, 202004, 202002, 202001, 201912, 201910, 201909, 201908, 201907, 201906,201905, 201904)
+
+  param_local$train$validation <- c(202104)
   param_local$train$testing <- c(202107)
 
 
@@ -335,8 +331,8 @@ HT_tuning_semillerio <- function( pinputexps, semillerio, bo_iteraciones, bypass
     max_depth = -1L, # -1 significa no limitar,  por ahora lo dejo fijo
     min_gain_to_split = 0.0, # min_gain_to_split >= 0.0
     min_sum_hessian_in_leaf = 0.001, #  min_sum_hessian_in_leaf >= 0.0
-    lambda_l1 = c( 1, 1000 ), # lambda_l1 >= 0.0
-    lambda_l2 = c( 1, 1000 ), # lambda_l2 >= 0.0
+    lambda_l1 = c( 20, 300 ), # lambda_l1 >= 0.0
+    lambda_l2 = c( 20, 300 ), # lambda_l2 >= 0.0
     max_bin = 31L, # lo debo dejar fijo, no participa de la BO
     num_iterations = 9999, # un numero muy grande, lo limita early_stopping_rounds
     
@@ -352,9 +348,9 @@ HT_tuning_semillerio <- function( pinputexps, semillerio, bo_iteraciones, bypass
     
     extra_trees = FALSE,
     # Parte variable
-    learning_rate = c( 0.02, 0.3 ),
-    feature_fraction = c( 0.5, 0.9 ),
-    num_leaves = c( 8L, 8196L,  "integer" ),
+    learning_rate = c( 0.075, 0.2 ),
+    feature_fraction = c( 0.5, 0.8 ),
+    num_leaves = c( 20L, 512L,  "integer" ),
     min_data_in_leaf = c( 5L, 50000L, "integer" ),
     max_delta_step = c( 1.0, 10.0 ),
 
@@ -462,8 +458,8 @@ wf_SEMI_sep <- function( pnombrewf )
 
   fm <- FM_final_models_lightgbm_semillerio( 
     c(ht, ts9), # los inputs
-    ranks = c(2), # 1 = el mejor de la bayesian optimization
-    semillerio = 30,   # cantidad de semillas finales
+    ranks = c(1:3), # 1 = el mejor de la bayesian optimization
+    semillerio = 20,   # cantidad de semillas finales
     repeticiones_exp = 3 )
   
   SC_scoring_semillerio( c(fm, ts9) )
